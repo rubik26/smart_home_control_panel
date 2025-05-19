@@ -1,0 +1,76 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smart_home_control_panel/presentation/bloc/smart_lamp_mode_bloc.dart';
+
+class SmartLamp extends StatefulWidget {
+  const SmartLamp({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _SmartLampState();
+}
+
+class _SmartLampState extends State<SmartLamp> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Smart Lamp'),
+      ),
+      body: Center(
+        child: BlocBuilder<SmartLampModeBloc, int>(
+          builder: (context, powerLevel) {
+            Color bulbColor;
+            switch (powerLevel) {
+              case 0:
+                bulbColor = Colors.grey;
+                break;
+              case 1:
+                bulbColor = Colors.yellow.shade200;
+                break;
+              case 2:
+                bulbColor = Colors.yellow.shade300;
+                break;
+              case 3:
+                bulbColor = Colors.yellow.shade400;
+                break;
+              case 4:
+                bulbColor = Colors.yellow.shade500;
+                break;
+              case 5:
+                bulbColor = Colors.yellow.shade600;
+                break;
+              case 6:
+                bulbColor = Colors.yellow.shade700;
+                break;
+              default:
+                bulbColor = Colors.grey;
+            }
+
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.lightbulb, size: 200, color: bulbColor),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Slider(
+                    value: powerLevel.toDouble(),
+                    min: 0,
+                    max: 6,
+                    divisions: 6,
+                    label: '$powerLevel',
+                    onChanged: (double value) {
+                      context
+                          .read<SmartLampModeBloc>()
+                          .add(SetPowerLevelEvent(value.toInt()));
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
