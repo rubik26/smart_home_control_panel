@@ -6,7 +6,7 @@ class ToggleLampPower {
 
   Future<int> call() async {
     final currentPower = smartLampRepo.getPower();
-    final newPower = (currentPower + 1) % 7; // Cycle through 0 to 6
+    final newPower = (currentPower + 1) % 7;
     return await smartLampRepo.togglePower(newPower);
   }
 }

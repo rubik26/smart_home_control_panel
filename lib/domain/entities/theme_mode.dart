@@ -1,7 +1,7 @@
 class ThemeMode {
-  bool isDarkMode;
+  final bool isDarkMode;
 
-  ThemeMode({this.isDarkMode = false});
+  const ThemeMode({this.isDarkMode = false});
 
   get darkMode => isDarkMode;
 }

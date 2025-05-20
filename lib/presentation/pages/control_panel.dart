@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_home_control_panel/presentation/pages/settings/setting.dart';
+import 'package:smart_home_control_panel/presentation/pages/smart_door.dart';
 import 'package:smart_home_control_panel/presentation/pages/smart_lamp/smart_lamp.dart';
 
 class ControlPanel extends StatelessWidget {
@@ -42,6 +43,22 @@ class ControlPanel extends StatelessWidget {
                   );
                 },
                 child: const Text('Smart Lamp'),
+              ),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: 200,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SmartDoor(),
+                    ),
+                  );
+                },
+                child: const Text('Smart Door'),
               ),
             ),
             const SizedBox(height: 300),

@@ -1,0 +1,10 @@
+{
+  "@@locale": "en",
+  "settingsTitle": "Settings",
+  "themeTitle": "Theme",
+  "themeSubtitle": "Light / Dark",
+  "languageTitle": "Language",
+  "languageSubtitle": "English",
+  "languageOptionEnglish": "English",
+  "languageOptionArmenian": "Armenian"
+}

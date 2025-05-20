@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smart_home_control_panel/presentation/bloc/theme_mode_bloc.dart';
+import 'package:smart_home_control_panel/presentation/pages/selected_lang/selected_lang.dart';
 
 class Setting extends StatefulWidget {
   const Setting({super.key});
@@ -45,7 +46,12 @@ class _SettingState extends State<Setting> {
             trailing: IconButton(
               icon: const Icon(Icons.arrow_forward),
               onPressed: () {
-                // Навигация к экрану выбора языка
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SelectedLang(),
+                  ),
+                );
               },
             ),
           ),
