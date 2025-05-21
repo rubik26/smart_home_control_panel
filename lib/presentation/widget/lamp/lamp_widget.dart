@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smart_home_control_panel/presentation/bloc/smart_lamp_mode_bloc.dart';
@@ -41,6 +43,31 @@ class _LampWidgetState extends State<LampWidget> {
             bulbColor = Colors.grey;
         }
 
+        final slider = Platform.isIOS
+            ? CupertinoSlider(
+                value: powerLevel.toDouble(),
+                min: 0,
+                max: 6,
+                divisions: 6,
+                onChanged: (value) {
+                  context
+                      .read<SmartLampModeBloc>()
+                      .add(SetPowerLevelEvent(value.toInt()));
+                },
+              )
+            : Slider(
+                value: powerLevel.toDouble(),
+                min: 0,
+                max: 6,
+                divisions: 6,
+                label: '$powerLevel',
+                onChanged: (value) {
+                  context
+                      .read<SmartLampModeBloc>()
+                      .add(SetPowerLevelEvent(value.toInt()));
+                },
+              );
+
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -48,18 +75,7 @@ class _LampWidgetState extends State<LampWidget> {
             const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Slider(
-                value: powerLevel.toDouble(),
-                min: 0,
-                max: 6,
-                divisions: 6,
-                label: '$powerLevel',
-                onChanged: (double value) {
-                  context
-                      .read<SmartLampModeBloc>()
-                      .add(SetPowerLevelEvent(value.toInt()));
-                },
-              ),
+              child: slider,
             ),
           ],
         );

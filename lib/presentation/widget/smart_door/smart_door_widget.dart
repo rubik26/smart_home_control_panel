@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smart_home_control_panel/presentation/bloc/smart_door_status_bloc.dart';
@@ -14,26 +16,21 @@ class _SmartDoorWidgetState extends State<SmartDoorWidget> {
   Widget build(BuildContext context) {
     return BlocBuilder<SmartDoorStatusBloc, SmartDoorStatusState>(
       builder: (context, state) {
-        IconData icon;
-        Color color;
+        final icon =
+            state.isDoorOpen ? Icons.door_front_door : Icons.door_sliding;
 
-        if (state.isDoorOpen) {
-          icon = Icons.door_front_door;
-          color = Colors.green;
-        } else if (state.isDoorLocked) {
-          icon = Icons.door_sliding;
-          color = Colors.red;
-        } else {
-          icon = Icons.door_sliding;
-          color = Colors.orange;
-        }
+        final color = state.isDoorOpen
+            ? Colors.green
+            : (state.isDoorLocked ? Colors.red : Colors.orange);
+
+        final statusText = 'Door: ${state.isDoorOpen ? 'Open' : 'Closed'}\n'
+            'Lock: ${state.isDoorLocked ? 'Enabled' : 'Disabled'}';
 
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AnimatedContainer(
               duration: const Duration(milliseconds: 400),
-              curve: Curves.easeInOut,
               height: 150,
               width: 150,
               decoration: BoxDecoration(
@@ -57,32 +54,51 @@ class _SmartDoorWidgetState extends State<SmartDoorWidget> {
               ),
             ),
             const SizedBox(height: 20),
-            Text(
-              'Door: ${state.isDoorOpen ? 'Open' : 'Closed'}\n'
-              'Lock: ${state.isDoorLocked ? 'Enabled' : 'Disabled'}',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 20),
-            ),
+            Text(statusText,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 20)),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                context.read<SmartDoorStatusBloc>().add(
-                      ToggleSmartDoorStatusEvent(),
-                    );
-              },
-              child: const Text('Open / Close'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                context.read<SmartDoorStatusBloc>().add(
-                      SetSmartDoorStatusEvent(
-                        state.isDoorOpen,
-                        !state.isDoorLocked,
-                      ),
-                    );
-              },
-              child: const Text('Lock / Unlock'),
-            ),
+            Platform.isIOS
+                ? CupertinoButton.filled(
+                    onPressed: () {
+                      context
+                          .read<SmartDoorStatusBloc>()
+                          .add(ToggleSmartDoorStatusEvent());
+                    },
+                    child: const Text('Open / Close'),
+                  )
+                : ElevatedButton(
+                    onPressed: () {
+                      context
+                          .read<SmartDoorStatusBloc>()
+                          .add(ToggleSmartDoorStatusEvent());
+                    },
+                    child: const Text('Open / Close'),
+                  ),
+            const SizedBox(height: 10),
+            Platform.isIOS
+                ? CupertinoButton(
+                    onPressed: () {
+                      context.read<SmartDoorStatusBloc>().add(
+                            SetSmartDoorStatusEvent(
+                              state.isDoorOpen,
+                              !state.isDoorLocked,
+                            ),
+                          );
+                    },
+                    child: const Text('Lock / Unlock'),
+                  )
+                : ElevatedButton(
+                    onPressed: () {
+                      context.read<SmartDoorStatusBloc>().add(
+                            SetSmartDoorStatusEvent(
+                              state.isDoorOpen,
+                              !state.isDoorLocked,
+                            ),
+                          );
+                    },
+                    child: const Text('Lock / Unlock'),
+                  ),
           ],
         );
       },

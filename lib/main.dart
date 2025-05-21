@@ -1,31 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:smart_home_control_panel/data/repositories_impl/smart_door_repo_impl.dart';
 import 'package:smart_home_control_panel/data/repositories_impl/smart_lamp_repo_impl.dart';
+import 'package:smart_home_control_panel/data/repositories_impl/smart_window_repo_impl.dart';
 import 'package:smart_home_control_panel/data/repositories_impl/theme_mode_repo_impl.dart';
 import 'package:smart_home_control_panel/domain/usecases/toggle_lamp_power.dart';
 import 'package:smart_home_control_panel/domain/usecases/toggle_smart_door_status.dart';
+import 'package:smart_home_control_panel/domain/usecases/toggle_smart_window_status.dart';
 import 'package:smart_home_control_panel/domain/usecases/toggle_theme.dart';
 import 'package:smart_home_control_panel/presentation/bloc/locale_cubit.dart';
 import 'package:smart_home_control_panel/presentation/bloc/smart_door_status_bloc.dart';
 import 'package:smart_home_control_panel/presentation/bloc/smart_lamp_mode_bloc.dart';
+import 'package:smart_home_control_panel/presentation/bloc/smart_window_status_bloc.dart';
 import 'package:smart_home_control_panel/presentation/bloc/theme_mode_bloc.dart';
 import 'package:smart_home_control_panel/presentation/pages/control_panel.dart';
 
 void main() async {
   await GetStorage.init();
+
   ToggleTheme toggleTheme = ToggleTheme(
     themeModeRepo: ThemeModeRepoImpl(),
   );
+
   ToggleLampPower toggleLampPower = ToggleLampPower(
     smartLampRepo: SmartLampRepoImpl(),
   );
+
   ToggleSmartDoorStatus toggleSmartDoorStatus = ToggleSmartDoorStatus(
     repository: SmartDoorRepoImpl(),
   );
+
+  ToggleSmartWindowStatus toggleSmartWindowStatus = ToggleSmartWindowStatus(
+    repository: SmartWindowRepoImpl(),
+  );
+
   runApp(
     MultiBlocProvider(
       providers: [
@@ -40,6 +50,9 @@ void main() async {
         ),
         BlocProvider(
           create: (_) => LocaleCubit(),
+        ),
+        BlocProvider(
+          create: (_) => SmartWindowStatusBloc(toggleSmartWindowStatus),
         ),
       ],
       child: MyApp(),
