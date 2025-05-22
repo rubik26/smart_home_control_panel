@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smart_home_control_panel/domain/entities/smart_window.dart';
+import 'package:smart_home_control_panel/l10n/app_localizations.dart';
 import 'package:smart_home_control_panel/presentation/bloc/smart_window_status_bloc.dart';
 
 class SmartWindowWidget extends StatefulWidget {
@@ -23,141 +24,158 @@ class _SmartWindowWidgetState extends State<SmartWindowWidget> {
         Color color;
 
         if (state.isOpen) {
-          icon = Icons.window;
+          icon = Icons.open_in_browser;
           color = Colors.green;
         } else if (state.isLocked) {
-          icon = Icons.lock;
+          icon = Icons.lock_outline;
           color = Colors.red;
         } else {
-          icon = Icons.window;
+          icon = Icons.close_fullscreen;
           color = Colors.orange;
         }
 
         return SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+          padding: const EdgeInsets.all(20),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AnimatedContainer(
-                duration: const Duration(milliseconds: 400),
-                height: 150,
-                width: 150,
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: color.withOpacity(0.2),
+                  color: color.withOpacity(0.1),
+                  boxShadow: [
+                    BoxShadow(
+                      color: color.withOpacity(0.4),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
                 ),
-                child: Center(
-                  child: Icon(
-                    icon,
-                    size: 100,
-                    color: color,
-                  ),
-                ),
+                height: 160,
+                width: 160,
+                child: Icon(icon, size: 90, color: color),
               ),
               const SizedBox(height: 20),
               Text(
-                'Window Status: ${state.isOpen ? "Open" : "Closed"} | ${state.isLocked ? "Locked" : "Unlocked"}',
+                'Window is ${state.isOpen ? "Open" : "Closed"}',
                 style: TextStyle(
-                  color: color,
-                  fontSize: 18,
-                  fontFamily: isIOS ? 'San Francisco' : null,
-                ),
-                textAlign: TextAlign.center,
+                    fontSize: 20, fontWeight: FontWeight.bold, color: color),
               ),
-              const SizedBox(height: 10),
-              if (state.dirt != Dirt.none)
-                Column(
-                  children: [
-                    const SizedBox(height: 10),
-                    Icon(Icons.warning_amber_rounded, color: Colors.brown),
-                    Text(
-                      'Dirty: ${state.dirt.name}',
-                      style: const TextStyle(color: Colors.brown, fontSize: 16),
-                    ),
-                    const SizedBox(height: 10),
-                    isIOS
-                        ? CupertinoButton.filled(
-                            onPressed: () {
-                              context.read<SmartWindowStatusBloc>().add(
-                                    SetSmartWindowStatusEvent(
-                                      isOpen: state.isOpen,
-                                      isLocked: state.isLocked,
-                                      dirtList: const [
-                                        Dirt.none,
-                                        Dirt.rainStains,
-                                        Dirt.dust
-                                      ],
-                                      dirt: Dirt.none,
-                                    ),
-                                  );
-                            },
-                            child: const Text("Clean Window"),
-                          )
-                        : ElevatedButton(
-                            onPressed: () {
-                              context.read<SmartWindowStatusBloc>().add(
-                                    SetSmartWindowStatusEvent(
-                                      isOpen: state.isOpen,
-                                      isLocked: state.isLocked,
-                                      dirtList: const [
-                                        Dirt.none,
-                                        Dirt.rainStains,
-                                        Dirt.dust
-                                      ],
-                                      dirt: Dirt.none,
-                                    ),
-                                  );
-                            },
-                            child: const Text("Clean Window"),
-                          ),
-                  ],
-                ),
+              Text(
+                state.isLocked ? "Locked" : "Unlocked",
+                style: TextStyle(fontSize: 16, color: color.withOpacity(0.7)),
+              ),
               const SizedBox(height: 20),
-              isIOS
-                  ? CupertinoButton(
-                      onPressed: () {
-                        context.read<SmartWindowStatusBloc>().add(
-                              ToggleSmartWindowStatusEvent(),
-                            );
-                      },
-                      child: const Text("Open / Close"),
-                    )
-                  : ElevatedButton(
-                      onPressed: () {
-                        context.read<SmartWindowStatusBloc>().add(
-                              ToggleSmartWindowStatusEvent(),
-                            );
-                      },
-                      child: const Text("Open / Close"),
-                    ),
-              const SizedBox(height: 10),
-              isIOS
-                  ? CupertinoButton(
-                      onPressed: () {
-                        context.read<SmartWindowStatusBloc>().add(
-                              SetSmartWindowStatusEvent(
-                                isOpen: state.isOpen,
-                                isLocked: !state.isLocked,
-                                dirtList: state.dirtList,
-                                dirt: state.dirt,
-                              ),
-                            );
-                      },
-                      child: const Text("Lock / Unlock"),
-                    )
-                  : ElevatedButton(
-                      onPressed: () {
-                        context.read<SmartWindowStatusBloc>().add(
-                              SetSmartWindowStatusEvent(
-                                isOpen: state.isOpen,
-                                isLocked: !state.isLocked,
-                                dirtList: state.dirtList,
-                                dirt: state.dirt,
-                              ),
-                            );
-                      },
-                      child: const Text("Lock / Unlock"),
-                    ),
+              if (state.dirt != Dirt.none) ...[
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.brown.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.brown),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.warning_amber_rounded,
+                          color: Colors.brown),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Dirty: ${state.dirt.name}',
+                        style:
+                            const TextStyle(fontSize: 16, color: Colors.brown),
+                      ),
+                    ],
+                  ),
+                ),
+                isIOS
+                    ? CupertinoButton.filled(
+                        onPressed: () {
+                          context.read<SmartWindowStatusBloc>().add(
+                                SetSmartWindowStatusEvent(
+                                  isOpen: state.isOpen,
+                                  isLocked: state.isLocked,
+                                  dirtList: state.dirtList,
+                                  dirt: Dirt.none,
+                                ),
+                              );
+                        },
+                        child: Text(AppLocalizations.of(context).cleanWindow),
+                      )
+                    : ElevatedButton.icon(
+                        icon: const Icon(Icons.cleaning_services),
+                        onPressed: () {
+                          context.read<SmartWindowStatusBloc>().add(
+                                SetSmartWindowStatusEvent(
+                                  isOpen: state.isOpen,
+                                  isLocked: state.isLocked,
+                                  dirtList: state.dirtList,
+                                  dirt: Dirt.none,
+                                ),
+                              );
+                        },
+                        label: Text(AppLocalizations.of(context).cleanWindow),
+                      ),
+                const SizedBox(height: 20),
+              ],
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                alignment: WrapAlignment.center,
+                children: [
+                  isIOS
+                      ? CupertinoButton(
+                          onPressed: () {
+                            context.read<SmartWindowStatusBloc>().add(
+                                  ToggleSmartWindowStatusEvent(),
+                                );
+                          },
+                          child: Text(AppLocalizations.of(context).openClose),
+                        )
+                      : ElevatedButton.icon(
+                          icon: Icon(
+                              state.isOpen ? Icons.close : Icons.open_in_new),
+                          onPressed: () {
+                            context.read<SmartWindowStatusBloc>().add(
+                                  ToggleSmartWindowStatusEvent(),
+                                );
+                          },
+                          label: Text(AppLocalizations.of(context).openClose),
+                        ),
+                  isIOS
+                      ? CupertinoButton(
+                          onPressed: () {
+                            context.read<SmartWindowStatusBloc>().add(
+                                  SetSmartWindowStatusEvent(
+                                    isOpen: state.isOpen,
+                                    isLocked: !state.isLocked,
+                                    dirtList: state.dirtList,
+                                    dirt: state.dirt,
+                                  ),
+                                );
+                          },
+                          child: Text(AppLocalizations.of(context).lockUnlock),
+                        )
+                      : ElevatedButton.icon(
+                          icon: Icon(
+                              state.isLocked ? Icons.lock_open : Icons.lock),
+                          onPressed: () {
+                            context.read<SmartWindowStatusBloc>().add(
+                                  SetSmartWindowStatusEvent(
+                                    isOpen: state.isOpen,
+                                    isLocked: !state.isLocked,
+                                    dirtList: state.dirtList,
+                                    dirt: state.dirt,
+                                  ),
+                                );
+                          },
+                          label: Text(AppLocalizations.of(context).lockUnlock),
+                        ),
+                ],
+              ),
             ],
           ),
         );

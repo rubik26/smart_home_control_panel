@@ -11,39 +11,25 @@ class LampWidget extends StatefulWidget {
   State<LampWidget> createState() => _LampWidgetState();
 }
 
-class _LampWidgetState extends State<LampWidget> {
+class _LampWidgetState extends State<LampWidget>
+    with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SmartLampModeBloc, int>(
       builder: (context, powerLevel) {
-        Color bulbColor;
-        switch (powerLevel) {
-          case 0:
-            bulbColor = Colors.grey;
-            break;
-          case 1:
-            bulbColor = Colors.yellow.shade200;
-            break;
-          case 2:
-            bulbColor = Colors.yellow.shade300;
-            break;
-          case 3:
-            bulbColor = Colors.yellow.shade400;
-            break;
-          case 4:
-            bulbColor = Colors.yellow.shade500;
-            break;
-          case 5:
-            bulbColor = Colors.yellow.shade600;
-            break;
-          case 6:
-            bulbColor = Colors.yellow.shade700;
-            break;
-          default:
-            bulbColor = Colors.grey;
+        final isIOS = Platform.isIOS;
+
+        // Цвет лампы в зависимости от яркости
+        Color getBulbColor(int level) {
+          if (level == 0) return Colors.grey;
+          return HSLColor.fromAHSL(
+                  1.0, 50, 1.0, (0.4 + level * 0.1).clamp(0.0, 1.0))
+              .toColor();
         }
 
-        final slider = Platform.isIOS
+        final bulbColor = getBulbColor(powerLevel);
+
+        final slider = isIOS
             ? CupertinoSlider(
                 value: powerLevel.toDouble(),
                 min: 0,
@@ -71,10 +57,43 @@ class _LampWidgetState extends State<LampWidget> {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.lightbulb, size: 200, color: bulbColor),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 400),
+              height: 220,
+              width: 220,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: bulbColor.withOpacity(0.1 + powerLevel * 0.1),
+                boxShadow: powerLevel > 0
+                    ? [
+                        BoxShadow(
+                          color: bulbColor.withOpacity(0.5),
+                          blurRadius: 30 + powerLevel * 5,
+                          spreadRadius: 10,
+                        ),
+                      ]
+                    : [],
+              ),
+              child: Center(
+                child: Icon(
+                  Icons.lightbulb,
+                  size: 120,
+                  color: bulbColor,
+                ),
+              ),
+            ),
             const SizedBox(height: 20),
+            Text(
+              "Power Level: $powerLevel",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: bulbColor,
+              ),
+            ),
+            const SizedBox(height: 10),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 24),
               child: slider,
             ),
           ],

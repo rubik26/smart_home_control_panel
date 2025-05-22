@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:smart_home_control_panel/data/datasources/local/smart_door_local_datasource.dart';
 import 'package:smart_home_control_panel/domain/usecases/toggle_smart_door_status.dart';
 
 sealed class SmartDoorStatusEvent {}
@@ -35,14 +35,13 @@ class SmartDoorStatusState {
 
 class SmartDoorStatusBloc
     extends Bloc<SmartDoorStatusEvent, SmartDoorStatusState> {
-  final box = GetStorage();
   final ToggleSmartDoorStatus toggleSmartDoorStatus;
 
   SmartDoorStatusBloc(this.toggleSmartDoorStatus)
       : super(
           SmartDoorStatusState(
-            isDoorOpen: GetStorage().read('smart_door_open') ?? false,
-            isDoorLocked: GetStorage().read('smart_door_locked') ?? false,
+            isDoorOpen: SmartDoorLocalDataSourceImpl().getDoorOpenStatus(),
+            isDoorLocked: SmartDoorLocalDataSourceImpl().getDoorLockedStatus(),
           ),
         ) {
     on<ToggleSmartDoorStatusEvent>((event, emit) async {
@@ -68,14 +67,8 @@ class SmartDoorStatusBloc
           'Вы заблокировали открытую дверь. Дверь будет закрыта',
         );
       }
-      box.write(
-        'smart_door_open',
-        state.isDoorOpen,
-      );
-      box.write(
-        'smart_door_locked',
-        state.isDoorLocked,
-      );
+      SmartDoorLocalDataSourceImpl().setDoorOpenStatus(isOpen);
+      SmartDoorLocalDataSourceImpl().setDoorLockedStatus(isLocked);
     });
 
     on<SetSmartDoorStatusEvent>(

@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smart_home_control_panel/l10n/app_localizations.dart';
 import 'package:smart_home_control_panel/presentation/bloc/theme_mode_bloc.dart';
 import 'package:smart_home_control_panel/presentation/pages/selected_lang/selected_lang.dart';
 
@@ -67,7 +68,7 @@ class _SettingState extends State<Setting> {
     } else {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Settings'),
+          title: Text(AppLocalizations.of(context).settingsTitle),
         ),
         body: ListView(
           padding: const EdgeInsets.all(8),
@@ -80,8 +81,8 @@ class _SettingState extends State<Setting> {
             BlocBuilder<ThemeModeBloc, bool>(
               builder: (context, state) {
                 return ListTile(
-                  title: const Text('Theme'),
-                  subtitle: const Text('Light / Dark'),
+                  title: Text(AppLocalizations.of(context).themeTitle),
+                  subtitle: Text(AppLocalizations.of(context).themeSubtitle),
                   trailing: Switch(
                     value: state,
                     onChanged: (value) {
@@ -93,8 +94,8 @@ class _SettingState extends State<Setting> {
               },
             ),
             ListTile(
-              title: const Text('Language'),
-              subtitle: const Text('English (in progress)'),
+              title: Text(AppLocalizations.of(context).languageTitle),
+              subtitle: Text(AppLocalizations.of(context).languageSubtitle),
               trailing: IconButton(
                 icon: const Icon(Icons.arrow_forward),
                 onPressed: () {

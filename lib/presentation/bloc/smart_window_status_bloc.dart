@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:smart_home_control_panel/data/datasources/local/smart_window_local_datasource.dart';
 import 'package:smart_home_control_panel/domain/entities/smart_window.dart';
 import 'package:smart_home_control_panel/domain/usecases/toggle_smart_window_status.dart';
 
@@ -42,21 +43,13 @@ class SmartWindowStatusBloc
 
   final Random random = Random();
 
-  final box = GetStorage();
-
   SmartWindowStatusBloc(this.toggleSmartWindowStatus)
       : super(
           SetSmartWindowStatusEvent(
-            isOpen: GetStorage().read('smart_window_open') ?? false,
-            isLocked: GetStorage().read('smart_window_locked') ?? false,
-            dirtList: [
-              Dirt.rainStains,
-              Dirt.dust,
-              Dirt.birdDroppings,
-              Dirt.pollen,
-              Dirt.fingerprints
-            ],
-            dirt: GetStorage().read('smart_window_dirt') ?? Dirt.none,
+            isOpen: SmartWindowLocalDatasourceImpl().getWindowOpenStatus(),
+            isLocked: SmartWindowLocalDatasourceImpl().getWindowLockedStatus(),
+            dirtList: SmartWindowLocalDatasourceImpl().getWindowDirtList(),
+            dirt: SmartWindowLocalDatasourceImpl().getWindowDirtStatus(),
           ),
         ) {
     on<ToggleSmartWindowStatusEvent>(
@@ -81,9 +74,9 @@ class SmartWindowStatusBloc
           state.copyWith(isOpen: newIsOpen, dirt: dirt),
         );
 
-        box.write('smart_window_open', newIsOpen);
-        box.write('smart_window_locked', isLocked);
-        box.write('smart_window_dirt', dirt);
+        SmartWindowLocalDatasourceImpl().setWindowOpenStatus(newIsOpen);
+        SmartWindowLocalDatasourceImpl().setWindowLockedStatus(isLocked);
+        SmartWindowLocalDatasourceImpl().setWindowDirtStatus(dirt);
       },
     );
 

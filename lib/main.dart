@@ -10,6 +10,7 @@ import 'package:smart_home_control_panel/domain/usecases/toggle_lamp_power.dart'
 import 'package:smart_home_control_panel/domain/usecases/toggle_smart_door_status.dart';
 import 'package:smart_home_control_panel/domain/usecases/toggle_smart_window_status.dart';
 import 'package:smart_home_control_panel/domain/usecases/toggle_theme.dart';
+import 'package:smart_home_control_panel/l10n/app_localizations.dart';
 import 'package:smart_home_control_panel/presentation/bloc/locale_cubit.dart';
 import 'package:smart_home_control_panel/presentation/bloc/smart_door_status_bloc.dart';
 import 'package:smart_home_control_panel/presentation/bloc/smart_lamp_mode_bloc.dart';
@@ -79,6 +80,7 @@ class _MyAppState extends State<MyApp> {
         builder: (context, isDarkMode) {
           return MaterialApp(
             localizationsDelegates: [
+              AppLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
