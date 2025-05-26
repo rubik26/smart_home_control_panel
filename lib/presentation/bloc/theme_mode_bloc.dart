@@ -13,7 +13,6 @@ class ThemeModeState {
 }
 
 class ThemeModeBloc extends Bloc<ThemeModeEvent, bool> {
-  final GetStorage box = GetStorage();
   final ToggleTheme toggleTheme;
 
   ThemeModeBloc(this.toggleTheme)
